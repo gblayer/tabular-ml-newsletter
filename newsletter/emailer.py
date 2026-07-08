@@ -1,11 +1,20 @@
-"""Build the HTML digest and send it over SMTP (Gmail app password works)."""
+"""Build the HTML digest and send it.
+
+Transport is chosen by whichever credentials are present (see `send`):
+  1. Gmail HTTPS API   — works behind a 443-only proxy (e.g. cloud routines)
+  2. Resend HTTPS API  — needs a verified sender/domain
+  3. SMTP              — local runs / GitHub Actions (Gmail app password)
+"""
 from __future__ import annotations
 
+import base64
 import os
 import smtplib
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+import requests
 
 from .models import Paper
 
@@ -129,22 +138,99 @@ def build_html(
     </div>"""
 
 
-def send(html: str, subject: str, smtp_host: str, smtp_port: int) -> None:
-    user = os.environ["SMTP_USER"]
-    password = os.environ["SMTP_PASSWORD"]
-    # NEWSLETTER_TO may be a single address or a comma/semicolon-separated list.
-    raw_to = os.environ["NEWSLETTER_TO"]
-    recipients = [addr.strip() for addr in raw_to.replace(";", ",").split(",") if addr.strip()]
+GMAIL_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GMAIL_SEND_URL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
+RESEND_URL = "https://api.resend.com/emails"
 
+
+def _recipients() -> list[str]:
+    # NEWSLETTER_TO may be a single address or a comma/semicolon-separated list.
+    raw = os.environ["NEWSLETTER_TO"]
+    return [a.strip() for a in raw.replace(";", ",").split(",") if a.strip()]
+
+
+def _build_message(subject: str, html: str, sender: str, bcc: list[str] | None = None) -> MIMEMultipart:
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = user
-    # Show only the sender in the visible To: header (keeps subscribers private);
-    # actual delivery uses the full recipient list below.
-    msg["To"] = user
+    msg["From"] = sender
+    # Show only the sender in the visible To: header — recipients stay private.
+    msg["To"] = sender
+    if bcc:
+        msg["Bcc"] = ", ".join(bcc)
     msg.attach(MIMEText(html, "html"))
+    return msg
 
+
+def _send_via_gmail_api(subject: str, html: str, sender: str, recipients: list[str]) -> None:
+    """Gmail HTTPS API. Exchanges the refresh token for an access token, then
+    posts the raw MIME message. Delivery follows the To/Bcc headers, so
+    recipients go in Bcc to stay private. Works where raw SMTP :587 is blocked."""
+    token_resp = requests.post(
+        GMAIL_TOKEN_URL,
+        data={
+            "client_id": os.environ["GMAIL_CLIENT_ID"],
+            "client_secret": os.environ["GMAIL_CLIENT_SECRET"],
+            "refresh_token": os.environ["GMAIL_REFRESH_TOKEN"],
+            "grant_type": "refresh_token",
+        },
+        timeout=30,
+    )
+    token_resp.raise_for_status()
+    access_token = token_resp.json()["access_token"]
+
+    msg = _build_message(subject, html, sender, bcc=recipients)
+    raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
+    resp = requests.post(
+        GMAIL_SEND_URL,
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"raw": raw},
+        timeout=30,
+    )
+    resp.raise_for_status()
+
+
+def _send_via_resend(subject: str, html: str, recipients: list[str]) -> None:
+    """Resend HTTPS API. `from` must be a Resend-verified sender/domain."""
+    resp = requests.post(
+        RESEND_URL,
+        headers={"Authorization": f"Bearer {os.environ['RESEND_API_KEY']}"},
+        json={
+            "from": os.environ.get("RESEND_FROM", "Forward Pass <onboarding@resend.dev>"),
+            "to": recipients,
+            "subject": subject,
+            "html": html,
+        },
+        timeout=30,
+    )
+    resp.raise_for_status()
+
+
+def _send_via_smtp(subject: str, html: str, sender: str, recipients: list[str],
+                   smtp_host: str, smtp_port: int) -> None:
+    password = os.environ["SMTP_PASSWORD"]
+    msg = _build_message(subject, html, sender)  # recipients via SMTP envelope
     with smtplib.SMTP(smtp_host, smtp_port) as server:
         server.starttls()
-        server.login(user, password)
-        server.sendmail(user, recipients, msg.as_string())
+        server.login(sender, password)
+        server.sendmail(sender, recipients, msg.as_string())
+
+
+def send(html: str, subject: str, smtp_host: str, smtp_port: int) -> None:
+    """Deliver the digest via whichever transport is configured (priority
+    order): Gmail HTTPS API, Resend HTTPS API, then SMTP. The HTTPS options
+    work in sandboxes that only allow port 443 (where raw SMTP is blocked)."""
+    sender = os.environ.get("SMTP_USER", "")
+    recipients = _recipients()
+
+    if os.environ.get("GMAIL_REFRESH_TOKEN"):
+        _send_via_gmail_api(subject, html, sender, recipients)
+    elif os.environ.get("RESEND_API_KEY"):
+        _send_via_resend(subject, html, recipients)
+    elif os.environ.get("SMTP_PASSWORD"):
+        _send_via_smtp(subject, html, sender, recipients, smtp_host, smtp_port)
+    else:
+        raise RuntimeError(
+            "No email transport configured: set GMAIL_REFRESH_TOKEN "
+            "(+ GMAIL_CLIENT_ID / GMAIL_CLIENT_SECRET), or RESEND_API_KEY, "
+            "or SMTP_PASSWORD."
+        )

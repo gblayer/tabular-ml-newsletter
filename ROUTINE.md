@@ -9,15 +9,19 @@ API credits. The scripts handle fetching, dedup, and email delivery.
 1. Push this repo to GitHub (routines clone a repo at each run).
 2. Go to **claude.ai/code/routines** → **New routine**.
 3. Select this repository.
-4. In the routine's **cloud environment**, add these environment variables
-   (Anthropic API key NOT needed):
-   - `SMTP_USER` — your Gmail address
-   - `SMTP_PASSWORD` — a Gmail App Password
-     (myaccount.google.com/apppasswords, requires 2-Step Verification)
-   - `NEWSLETTER_TO` — where the digest should land
-   Make sure the environment allows network access to arxiv.org,
-   huggingface.co, api2.openreview.net and smtp.gmail.com — plus general
-   web access (web search / fetch) for the industry-news section.
+4. In the routine's **cloud environment**, add environment variables
+   (Anthropic API key NOT needed). Pick ONE email transport:
+   - **Gmail HTTPS API (use this in cloud routines** — their network proxy
+     only allows port 443, so raw SMTP :587 is blocked):
+     `SMTP_USER` (the from-address / Gmail account), `GMAIL_CLIENT_ID`,
+     `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`. See "Gmail API setup" below.
+   - **Resend HTTPS API** (alternative): `RESEND_API_KEY`, optional
+     `RESEND_FROM` (needs a Resend-verified sender/domain to reach others).
+   - **SMTP** (local runs / GitHub Actions only): `SMTP_USER`,
+     `SMTP_PASSWORD` (a Gmail App Password).
+   Plus `NEWSLETTER_TO` — comma-separated recipients.
+   Network access: set the environment to **Full** (needs arxiv.org,
+   huggingface.co, googleapis.com for Gmail, and open web for industry news).
 5. Trigger: **schedule**, daily, **07:30 UTC** (delivered before 10:00 Paris;
    the run takes ~10-15 min).
 6. Paste the prompt below.
