@@ -55,14 +55,16 @@ no questions. Steps:
      - neural processes (conditional / attentive / transformer NPs) used for
        in-context or probabilistic tabular prediction.
 
-3. For every paper scoring >= 6, write a pedagogical digest with three
+3. For every paper scoring >= 6, write a pedagogical digest with FOUR
    fields — problem (1-2 sentences: goal and why it matters), method (1-2
-   sentences, name the core idea concretely), limitations (honest; prefix
-   with "Likely:" if inferred rather than stated in the abstract). Plain
-   language, no hype, max ~40 words per field. Publish ALL papers that score
-   >= 6 even if there are fewer than 10; only cap at the 10 highest if more.
-   I know the field (TabPFN, tabular ICL, LLM embeddings, relational FMs,
-   neural processes) — be precise, not vague.
+   sentences, name the core idea concretely), results (1-2 sentences: the
+   main empirical/quantitative finding — key numbers, what beat what;
+   prefix "Likely:" if inferred), limitations (honest; prefix "Likely:" if
+   inferred rather than stated in the abstract). Plain language, no hype,
+   max ~40 words per field. Publish ALL papers that score >= 6 even if
+   there are fewer than 10; only cap at the 10 highest if more. I know the
+   field (TabPFN, tabular ICL, LLM embeddings, relational FMs, neural
+   processes) — be precise, not vague.
 
 4. INDUSTRY NEWS (config.yaml -> industry_watch). Web-search for news about
    the listed companies' tabular-FM work: model releases, papers, funding,
@@ -83,7 +85,7 @@ no questions. Steps:
    {"window_label": "<from candidates.json>",
     "papers": [{id, title, authors, url, source, relevance_score,
                 matched_author, matched_keyword, is_new_version,
-                bullets: {problem, method, limitations}}],
+                bullets: {problem, method, results, limitations}}],
     "industry": [{company, headline, date, url, summary}],   // [] if none
     "spotlight": {theme, body}}                               // omit if none
    Copy id/title/authors/url/source/matched_* fields verbatim from

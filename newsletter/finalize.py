@@ -15,7 +15,7 @@ needed). Expected shape:
       "source": "arxiv", "relevance_score": 8,
       "matched_author": null, "matched_keyword": "tabular",
       "is_new_version": false,
-      "bullets": {"problem": "...", "method": "...", "limitations": "..."}
+      "bullets": {"problem": "...", "method": "...", "results": "...", "limitations": "..."}
     }
   ],
   "industry": [                         # optional; omit or [] if no fresh news

@@ -42,7 +42,13 @@ topic_profile: |
   - Deep learning architectures for tabular data (transformers for tables,
     row/column attention, encoder-decoder designs, retrieval-based tabular models)
   - Relational / multi-table foundation models and relational deep learning
-    (KumoRFM, relational graph transformers, temporal heterogeneous graphs)
+    (KumoRFM, relational graph transformers, temporal heterogeneous graphs),
+    and knowledge-graph / GNN methods — RELEVANT ONLY when the contribution
+    is PREDICTION on relational/tabular data (classification, regression,
+    time-series, supervised or unsupervised/representation tasks). Framings
+    that are NOT about the predictive modelling itself — adversarial
+    attacks/robustness, integrity constraints, database-systems internals,
+    query optimization, pure graph theory — are NOT relevant.
   - Semantic and language-aware tabular learning: LLM embeddings for
     tabular features, context-aware semantic embeddings, exploiting column
     names / cell text / metadata, tables with free-text fields
@@ -94,6 +100,10 @@ topic_profile: |
     tables/structured-data connection
   - Pure applications of neural processes / meta-learning outside tabular
     (image completion, weather downscaling, spatial fields)
+  - Relational-DL / graph / KG papers whose contribution is NOT tabular
+    prediction — e.g. adversarial attacks/robustness, integrity constraints,
+    database internals, query optimization (e.g. "Structural Adversarial
+    Attacks on Relational Deep Learning" is NOT relevant)
 
 # ------------------------------------------------------------
 # CANDIDATE GENERATION (stage 1, cheap & broad)

@@ -35,6 +35,9 @@ def _paper_html(p: Paper) -> str:
     elif p.matched_keyword and p.matched_keyword.startswith("cites"):
         via = f'<span style="color:#888;font-size:12px;"> · {p.matched_keyword}</span>'
     version_note = ' <span style="color:#888;font-size:12px;">(updated version)</span>' if p.is_new_version else ""
+    # Results sits between method and limitations; rendered only when present
+    # so older/thin digests degrade gracefully.
+    results_li = f"<li><b>Results:</b> {b['results']}</li>" if b.get("results") else ""
     return f"""
     <div style="margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #eee;">
       <div style="margin-bottom:6px;">
@@ -48,6 +51,7 @@ def _paper_html(p: Paper) -> str:
       <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.5;color:#333;">
         <li><b>Problem:</b> {b.get('problem','')}</li>
         <li><b>Method:</b> {b.get('method','')}</li>
+        {results_li}
         <li><b>Limitations:</b> {b.get('limitations','')}</li>
       </ul>
       <div style="margin-top:8px;"><a href="{p.url}" style="font-size:13px;color:#1857B6;">→ paper</a></div>
