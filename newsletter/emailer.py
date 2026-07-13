@@ -250,6 +250,7 @@ def build_html(
     spotlight: dict | None = None,   # accepted for compatibility; not rendered
     name: str = "Forward Pass",
     extra_top_html: str = "",        # inserted inside <body> before the card (web nav)
+    site_url: str = "",              # if set, footer links to the online issue + subscribe page
 ) -> str:
     now = datetime.now()
     issue_no = _issue_number(now)
@@ -301,9 +302,20 @@ def build_html(
       <p style="margin:16px 0 0;font-family:{SANS};font-size:13px;color:#c3c0b4;line-height:1.4;">{subtitle}</p>
     </div>"""
 
-    # Footer: only the >>FP. mark.
+    # Footer: the >>FP. mark, plus optional web links (view online / subscribe).
+    web_links = ""
+    if site_url:
+        b = site_url.rstrip("/")
+        web_links = (
+            f'<div style="font-family:{MONO};font-size:11px;letter-spacing:.05em;margin-bottom:16px;">'
+            f'<a href="{b}/issues/issue-{issue_no}.html" style="color:{MUTED_LT};text-decoration:none;">View online</a>'
+            f'<span style="color:{MUTED_LT};"> &middot; </span>'
+            f'<a href="{b}/" style="color:{MUTED_LT};text-decoration:none;">Subscribe / share</a>'
+            f'</div>'
+        )
     footer = f"""
     <div style="background:{INK};padding:30px 40px;text-align:center;">
+      {web_links}
       <span style="font-family:{DISPLAY};font-weight:700;font-size:26px;letter-spacing:-.03em;
                    text-transform:uppercase;color:{PAPER};">
         <span style="color:{ACCENT};">&raquo;</span>FP<span style="color:{ACCENT2};">.</span>

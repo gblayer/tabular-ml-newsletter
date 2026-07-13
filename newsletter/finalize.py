@@ -94,8 +94,11 @@ def main() -> int:
     day_ok = now.weekday() in send_weekdays
 
     if has_content and day_ok:
+        site_cfg = CONFIG.get("site", {})
+        site_url = site_cfg.get("base_url", "") if site_cfg.get("enabled") else ""
         html = build_html(
             papers, window_label, industry=industry, spotlight=spotlight, name=name,
+            site_url=site_url,
         )
         extra = f" + {len(industry)} industry" if industry else ""
         subject = (
