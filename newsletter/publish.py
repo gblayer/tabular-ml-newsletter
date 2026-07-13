@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 from xml.sax.saxutils import escape
 
 from . import emailer
@@ -87,7 +88,9 @@ def _rss_xml(items: list[dict], base_url: str, title: str, subtitle: str) -> str
 def _index_html(items: list[dict], base_url: str, title: str, subtitle: str) -> str:
     b = base_url.rstrip("/")
     feed = f"{b}/rss.xml"
-    feedly = f"https://feedly.com/i/subscription/feed/{feed}"
+    # Feedly needs the feed URL percent-encoded as a single path segment,
+    # otherwise the "//" collapses and Feedly reports "feed not found".
+    feedly = f"https://feedly.com/i/subscription/feed/{quote(feed, safe='')}"
     rows = []
     for it in items:
         rows.append(
