@@ -302,7 +302,7 @@ claude:
 # ------------------------------------------------------------
 site:
   enabled: true
-  base_url: "https://gblayer.github.io/tabular-ml-newsletter"
+  base_url: "https://gblayer.github.io/forward-pass-newsletter"
 
 email:
   smtp_host: smtp.gmail.com
