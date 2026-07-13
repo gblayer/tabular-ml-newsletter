@@ -111,6 +111,8 @@ no questions. Steps:
 In your final chat summary (NOT the email), list each kept paper with its
 0-10 relevance score and flag any author-watch matches — those internal
 details are for me in the chat, and must NOT appear in the email itself.
+Also include the public site link (config site.base_url) and this issue's
+published URL, so I have them handy.
 
 If a fetch source fails, proceed with whatever candidates you have. If a
 web search for industry news fails, proceed with an empty industry list.

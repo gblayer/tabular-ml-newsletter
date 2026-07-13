@@ -1,7 +1,11 @@
-# 📊 Tabular ML Newsletter
+# ⏩ Forward Pass — daily tabular-AI newsletter
 
-A daily email digest of new papers relevant to your PhD on tabular
-foundation models — delivered every morning, zero servers to maintain.
+A daily digest of new papers relevant to tabular foundation models —
+delivered every weekday morning, zero servers to maintain.
+
+### 📬 [**Subscribe (web + RSS)**](https://gblayer.github.io/tabular-ml-newsletter/) &nbsp;·&nbsp; [RSS feed](https://gblayer.github.io/tabular-ml-newsletter/rss.xml) &nbsp;·&nbsp; [Read the archive](https://gblayer.github.io/tabular-ml-newsletter/)
+
+Free at any scale — add the RSS feed to your reader; unsubscribe by removing it.
 
 ## How it works
 

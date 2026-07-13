@@ -130,6 +130,7 @@ def _paper_html(p: Paper, featured: bool = False) -> str:
         if featured else
         f"border:1.5px solid {INK};background:#ffffff;"
     )
+    # (paper card carries fpCard / fpPaperTitle classes for the mobile media query)
     fields = (
         _field("Problem", b.get("problem", ""), first=True)
         + _field("Method", b.get("method", ""))
@@ -137,9 +138,9 @@ def _paper_html(p: Paper, featured: bool = False) -> str:
         + _field("Limitations", b.get("limitations", ""))
     )
     return f"""
-    <div style="{frame}padding:22px;margin-bottom:22px;">
+    <div class="fpCard" style="{frame}padding:22px;margin-bottom:22px;">
       <div style="margin-bottom:14px;">{_chip(badge, color)}{version_note}</div>
-      <a href="{p.url}" style="display:block;font-family:{DISPLAY};font-size:22px;font-weight:600;
+      <a href="{p.url}" class="fpPaperTitle" style="display:block;font-family:{DISPLAY};font-size:22px;font-weight:600;
          line-height:1.2;letter-spacing:-.02em;color:{INK};text-decoration:none;">{p.title}</a>
       <div style="font-family:{MONO};font-size:12.5px;color:{MUTED};margin:9px 0 14px;">{_authors(p)}</div>
       {fields}
@@ -223,11 +224,13 @@ def _glance_html(spotlight: dict | None, papers: list[Paper], industry: list[dic
         border = "" if i == len(entries) - 1 else f"border-bottom:1px solid {RULE_IDX};"
         row_html.append(
             f"""
-        <div style="{border}padding:9px 0;overflow:hidden;">
-          <span style="float:left;font-family:{MONO};font-size:11px;font-weight:600;color:{ACCENT};">{i + 1:02d}</span>
-          <span style="float:right;font-family:{MONO};font-size:10px;letter-spacing:.08em;
-                       text-transform:uppercase;color:{tag_color};">{tag}</span>
-          <div style="margin:0 96px 0 30px;font-family:{SANS};font-size:14px;line-height:1.4;color:{INK};">{text}</div>
+        <div style="{border}padding:10px 0;">
+          <div style="margin-bottom:3px;">
+            <span style="font-family:{MONO};font-size:11px;font-weight:600;color:{ACCENT};">{i + 1:02d}</span>
+            <span style="font-family:{MONO};font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+                         color:{tag_color};margin-left:10px;">{tag}</span>
+          </div>
+          <div style="font-family:{SANS};font-size:14px;line-height:1.45;color:{INK};">{text}</div>
         </div>"""
         )
 
@@ -285,14 +288,14 @@ def build_html(
 
     # Stacked masthead title: >>Forward / Pass.  (P sits under F)
     title = (
-        f'<h1 style="margin:16px 0 0;font-family:{DISPLAY};font-weight:700;font-size:44px;'
-        f'letter-spacing:-.025em;line-height:.98;text-transform:uppercase;color:{PAPER};">'
+        f'<h1 class="fpTitle" style="margin:16px 0 0;font-family:{DISPLAY};font-weight:700;font-size:38px;'
+        f'letter-spacing:-.02em;line-height:1;text-transform:uppercase;color:{PAPER};">'
         f'<span style="color:{ACCENT};">&raquo;</span>Forward<br>'
-        f'<span style="padding-left:31px;">Pass<span style="color:{ACCENT2};">.</span></span></h1>'
+        f'<span class="fpPad" style="padding-left:26px;">Pass<span style="color:{ACCENT2};">.</span></span></h1>'
     )
 
     masthead = f"""
-    <div style="background:{INK};color:{PAPER};padding:26px 40px 32px;">
+    <div class="fpMast" style="background:{INK};color:{PAPER};padding:26px 40px 32px;">
       <div style="font-family:{MONO};font-size:10.5px;font-weight:500;letter-spacing:.22em;
                   text-transform:uppercase;color:{MUTED_LT};overflow:hidden;">
         <span>Daily &middot; Tabular AI</span>
@@ -314,7 +317,7 @@ def build_html(
             f'</div>'
         )
     footer = f"""
-    <div style="background:{INK};padding:30px 40px;text-align:center;">
+    <div class="fpFoot" style="background:{INK};padding:30px 40px;text-align:center;">
       {web_links}
       <span style="font-family:{DISPLAY};font-weight:700;font-size:26px;letter-spacing:-.03em;
                    text-transform:uppercase;color:{PAPER};">
@@ -325,7 +328,7 @@ def build_html(
     card = f"""
     <div style="max-width:640px;margin:0 auto;background:{PAPER};border:1.5px solid {INK};">
       {masthead}
-      <div style="padding:38px 40px 12px;">
+      <div class="fpInner" style="padding:38px 40px 12px;">
         {glance}
         {body_blocks}
       </div>
@@ -338,7 +341,16 @@ def build_html(
         '<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700'
         '&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" '
         'rel="stylesheet">'
-        '<style>body{margin:0;padding:0;}a{text-decoration:none;}</style></head>'
+        '<style>body{margin:0;padding:0;}a{text-decoration:none;}'
+        '@media only screen and (max-width:600px){'
+        '.fpMast{padding:22px 22px 24px!important;}'
+        '.fpFoot{padding:26px 22px!important;}'
+        '.fpInner{padding:26px 22px 10px!important;}'
+        '.fpTitle{font-size:30px!important;}'
+        '.fpPad{padding-left:0!important;}'
+        '.fpCard{padding:18px!important;}'
+        '.fpPaperTitle{font-size:19px!important;line-height:1.25!important;}'
+        '}</style></head>'
         f'<body style="margin:0;padding:32px 12px;background:{DESK};">'
         f'{extra_top_html}'
         f'{card}'
