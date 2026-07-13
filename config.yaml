@@ -292,6 +292,18 @@ claude:
 # Secrets are read from env vars, never stored here:
 #   SMTP_USER, SMTP_PASSWORD, NEWSLETTER_TO
 # ------------------------------------------------------------
+# ------------------------------------------------------------
+# WEB PUBLISHING (free at any scale)
+# Each real send also writes docs/ (issue page + archive + RSS feed),
+# served by GitHub Pages. Readers subscribe via the RSS feed — no
+# subscriber list, no unsubscribe logic, no per-recipient cost.
+# base_url must match where the site is served (repo must be public for
+# free GitHub Pages, or point at another free static host).
+# ------------------------------------------------------------
+site:
+  enabled: true
+  base_url: "https://gblayer.github.io/tabular-ml-newsletter"
+
 email:
   smtp_host: smtp.gmail.com
   smtp_port: 587

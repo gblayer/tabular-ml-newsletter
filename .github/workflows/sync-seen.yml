@@ -1,9 +1,10 @@
-name: Sync seen_papers to main
+name: Sync routine outputs to main
 
 # The cloud routine can't push straight to `main` (its harness branches first),
-# so it lands seen_papers.json on a `claude/**` branch. This action copies that
-# file onto `main` so the dedup state stays current. Only seen_papers.json is
-# synced — never candidates.json/digest.json (they're gitignored anyway).
+# so it lands seen_papers.json and the published docs/ on a `claude/**` branch.
+# This action copies both onto `main` so the dedup state stays current AND
+# GitHub Pages (served from main /docs) serves the newest issue + RSS feed.
+# candidates.json/digest.json are never synced (they're gitignored anyway).
 
 on:
   push:
@@ -11,12 +12,13 @@ on:
       - 'claude/**'
     paths:
       - 'seen_papers.json'
+      - 'docs/**'
 
 permissions:
   contents: write
 
 concurrency:
-  group: sync-seen
+  group: sync-outputs
   cancel-in-progress: false
 
 jobs:
@@ -28,15 +30,16 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Copy seen_papers.json from the pushed branch onto main
+      - name: Copy seen_papers.json + docs/ from the pushed branch onto main
         run: |
-          git checkout "${{ github.sha }}" -- seen_papers.json
-          if git diff --quiet -- seen_papers.json; then
-            echo "seen_papers.json unchanged on main — nothing to sync."
+          git checkout "${{ github.sha }}" -- seen_papers.json 2>/dev/null || true
+          git checkout "${{ github.sha }}" -- docs 2>/dev/null || true
+          git add -A seen_papers.json docs 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to sync onto main."
             exit 0
           fi
           git config user.name "forward-pass-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add seen_papers.json
-          git commit -m "chore: sync seen papers from ${{ github.ref_name }}"
+          git commit -m "chore: sync seen papers + published issue from ${{ github.ref_name }}"
           git push origin main

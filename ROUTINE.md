@@ -96,14 +96,17 @@ no questions. Steps:
    papers list) — the industry/spotlight sections may still carry the issue.
 
 7. Send it:  python -m newsletter.finalize digest.json
-   This emails the digest and updates seen_papers.json. NOTE: finalize only
+   This emails the digest, updates seen_papers.json, AND (on a real send)
+   writes the free web issue + RSS feed under docs/. NOTE: finalize only
    sends when there is content — if BOTH papers and industry are empty (a
-   fully quiet day) it deliberately sends NO email and just updates
-   seen_papers.json. That is expected, not an error.
+   fully quiet day) it deliberately sends NO email and publishes nothing.
+   That is expected, not an error.
 
-8. Commit and push seen_papers.json to the default branch with message
-   "chore: update seen papers". Do NOT commit candidates.json or
-   digest.json.
+8. Commit and push ALL changes to the default branch with message
+   "chore: update seen papers + publish issue":
+     git add -A && git commit -m "chore: update seen papers + publish issue" && git push
+   This includes seen_papers.json and the docs/ folder. candidates.json and
+   digest.json are gitignored, so `git add -A` will not stage them.
 
 In your final chat summary (NOT the email), list each kept paper with its
 0-10 relevance score and flag any author-watch matches — those internal

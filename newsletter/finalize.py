@@ -108,6 +108,11 @@ def main() -> int:
         else:
             send(html, subject, CONFIG["email"]["smtp_host"], CONFIG["email"]["smtp_port"])
             print(f"Email sent: {subject}")
+            # Publish the free web issue + RSS feed alongside the email.
+            if CONFIG.get("site", {}).get("enabled"):
+                from . import publish as _publish
+                url = _publish.publish(papers, window_label, industry, spotlight, CONFIG)
+                print(f"Published web issue: {url} (docs/ updated)")
     elif not day_ok:
         print(f"{now.strftime('%A')} is not a configured send day "
               f"(run.send_weekdays = {send_weekdays}) — no email sent.")

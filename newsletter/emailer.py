@@ -249,6 +249,7 @@ def build_html(
     industry: list[dict] | None = None,
     spotlight: dict | None = None,   # accepted for compatibility; not rendered
     name: str = "Forward Pass",
+    extra_top_html: str = "",        # inserted inside <body> before the card (web nav)
 ) -> str:
     now = datetime.now()
     issue_no = _issue_number(now)
@@ -327,6 +328,7 @@ def build_html(
         'rel="stylesheet">'
         '<style>body{margin:0;padding:0;}a{text-decoration:none;}</style></head>'
         f'<body style="margin:0;padding:32px 12px;background:{DESK};">'
+        f'{extra_top_html}'
         f'{card}'
         '</body></html>'
     )
