@@ -1,5 +1,13 @@
 [
  {
+  "number": 6,
+  "date": "2026-07-15",
+  "iso": "2026-07-15T07:43:20.061880+00:00",
+  "title": "Forward Pass \u2014 Issue 6 (Jul 15, 2026)",
+  "path": "issues/issue-6.html",
+  "summary": "2 papers \u2014 GRAFT reframes table retrieval in data lakes as graph matching, gaining ~8-11% over prior retrievers on Spider/BIRD."
+ },
+ {
   "number": 5,
   "date": "2026-07-14",
   "iso": "2026-07-14T07:44:15.084896+00:00",
