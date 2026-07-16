@@ -1,5 +1,13 @@
 [
  {
+  "number": 7,
+  "date": "2026-07-16",
+  "iso": "2026-07-16T07:43:14.956579+00:00",
+  "title": "Forward Pass \u2014 Issue 7 (Jul 16, 2026)",
+  "path": "issues/issue-7.html",
+  "summary": "1 paper \u2014 Quiet day for tabular ML: 49 candidates screened, only one cleared the relevance bar."
+ },
+ {
   "number": 6,
   "date": "2026-07-15",
   "iso": "2026-07-15T07:43:20.061880+00:00",
