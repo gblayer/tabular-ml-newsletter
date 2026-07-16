@@ -129,7 +129,7 @@ def _index_html(items: list[dict], base_url: str, title: str, subtitle: str,
         f'<div style="max-width:640px;margin:0 auto;background:{PAPER};border:1.5px solid {INK};">'
         f'<div style="background:{INK};color:{PAPER};padding:26px 40px 30px;">'
         f'<div style="font-family:{MONO};font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;'
-        f'color:#8f8c80;">Daily &middot; Tabular AI</div>'
+        f'color:#8f8c80;">Weekly &middot; Tabular AI</div>'
         f'<h1 style="margin:14px 0 0;font-family:\'Space Grotesk\',\'Helvetica Neue\',Arial,sans-serif;'
         f'font-weight:700;font-size:40px;letter-spacing:-.025em;line-height:.98;text-transform:uppercase;'
         f'color:{PAPER};"><span style="color:{ACCENT};">&raquo;</span>Forward '
@@ -170,7 +170,7 @@ def publish(papers: list[Paper], window_label: str, industry: list[dict],
     base_url = (site.get("base_url") or "").rstrip("/")
     cf_token = site.get("cf_analytics_token") or ""
     name = config["email"].get("newsletter_name", "Forward Pass")
-    subtitle = "Your daily digest of the top papers in tabular AI."
+    subtitle = "Your weekly digest of the top papers in tabular AI."
 
     now = datetime.now()
     issue_no = emailer._issue_number(now)

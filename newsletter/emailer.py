@@ -6,7 +6,7 @@ Transport is chosen by whichever credentials are present (see `send`):
   3. SMTP              — local runs / GitHub Actions (Gmail app password)
 
 The HTML is the "Forward Pass" design: dark ink masthead with a running
-issue number, a "Today at a glance" index, full academic paper cards
+issue number, a "This week at a glance" index, full academic paper cards
 (top one framed in blue), an industry section (top item framed in orange,
 rest as compact rows), and a footer that is just the >>FP. mark. Everything
 is inline-styled and degrades cleanly where a client strips web fonts.
@@ -31,12 +31,13 @@ from .models import Paper
 # Issue numbering
 # ---------------------------------------------------------------------------
 # Set these once to calibrate the running counter, then it advances by 1 on
-# every publishing weekday — no state file, deterministic, dry-run safe.
+# every publishing day — no state file, deterministic, dry-run safe.
 # ISSUE_EPOCH = the date of the issue numbered ISSUE_START.
-# Anchored to the launch issue: 2026-07-08 was issue #1.
-ISSUE_EPOCH = date(2026, 7, 8)
-ISSUE_START = 1
-SEND_WEEKDAYS = {0, 1, 2, 3, 4}  # Mon–Fri (mirror config.yaml run.send_weekdays)
+# WEEKLY cadence since 2026-07-20: issues 1-5 were daily (Jul 8-14); the
+# first weekly issue, Monday 2026-07-20, is issue #6, advancing each Monday.
+ISSUE_EPOCH = date(2026, 7, 20)
+ISSUE_START = 6
+SEND_WEEKDAYS = {0}  # Mondays only (mirror config.yaml run.send_weekdays)
 
 
 def _issue_number(now: datetime) -> int:
@@ -198,7 +199,7 @@ def _industry_html(items: list[dict]) -> str:
 
 
 def _glance_html(spotlight: dict | None, papers: list[Paper], industry: list[dict] | None) -> str:
-    """'Today at a glance' — a summary-of-the-summary: short one-line takeaways
+    """'This week at a glance' — a summary-of-the-summary: short one-line takeaways
     tagged Academia / Industry. Primary source is the routine's spotlight
     bullets; falls back to paper titles / an industry line if none were written."""
     sp = spotlight or {}
@@ -240,7 +241,7 @@ def _glance_html(spotlight: dict | None, papers: list[Paper], industry: list[dic
     <div style="border:1.5px solid {INK};margin-bottom:44px;">
       <div style="background:{INK};color:{PAPER};padding:8px 14px;font-family:{MONO};font-size:10.5px;
                   font-weight:500;letter-spacing:.2em;text-transform:uppercase;overflow:hidden;">
-        <span>Today at a glance</span><span style="float:right;color:{MUTED_LT};">{items_label}</span>
+        <span>This week at a glance</span><span style="float:right;color:{MUTED_LT};">{items_label}</span>
       </div>
       <div style="padding:4px 14px 8px;">{"".join(row_html)}</div>
     </div>"""
@@ -257,7 +258,7 @@ def build_html(
 ) -> str:
     now = datetime.now()
     issue_no = _issue_number(now)
-    subtitle = "Your daily digest of the top papers in tabular AI."
+    subtitle = "Your weekly digest of the top papers in tabular AI."
 
     glance = _glance_html(spotlight, papers, industry)
 
@@ -270,7 +271,7 @@ def build_html(
         academic += "".join(_paper_html(p, featured=(i == 0)) for i, p in enumerate(papers))
     else:
         academic += (f'<p style="font-family:{SANS};color:{MUTED};font-size:14px;">'
-                     f'No new papers today — quiet day.</p>')
+                     f'No new papers this week — quiet week.</p>')
     blocks.append(academic)
     n += 1
 
@@ -280,7 +281,7 @@ def build_html(
             ind += _industry_html(industry)
         else:
             ind += (f'<p style="font-family:{SANS};color:{MUTED};font-size:14px;">'
-                    f'No new updates in the industry today.</p>')
+                    f'No new updates in the industry this week.</p>')
         blocks.append(ind)
         n += 1
 
@@ -298,7 +299,7 @@ def build_html(
     <div class="fpMast" style="background:{INK};color:{PAPER};padding:26px 40px 32px;">
       <div style="font-family:{MONO};font-size:10.5px;font-weight:500;letter-spacing:.22em;
                   text-transform:uppercase;color:{MUTED_LT};overflow:hidden;">
-        <span>Daily &middot; Tabular AI</span>
+        <span>Weekly &middot; Tabular AI</span>
         <span style="float:right;color:#c3c0b4;"><span style="color:{ACCENT};">&#9632;</span> Issue {issue_no} &middot; {now.strftime('%Y&middot;%m&middot;%d')}</span>
       </div>
       {title}

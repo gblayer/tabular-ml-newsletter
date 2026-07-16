@@ -243,8 +243,7 @@ semantic_scholar:
 # ------------------------------------------------------------
 industry_watch:
   enabled: true
-  lookback_days: 1                 # daily digest: industry news from the last 24h
-  monday_lookback_days: 3          # Mondays: cover Fri-Sun (weekend catch-up)
+  lookback_days: 7                 # weekly digest: industry news from the previous week
   companies:
     - Prior Labs          # TabPFN
     - Fundamental         # neural-process tabular FMs
@@ -322,7 +321,10 @@ email:
 # SCHEDULING BEHAVIOR
 # ------------------------------------------------------------
 run:
-  lookback_hours: 26        # daily window (26h = safety overlap; dedup handles it)
-  monday_lookback_hours: 74 # Mondays reach back to Friday to sweep the weekend
+  weekly: true              # WEEKLY cadence: each issue covers the previous
+                            # full calendar week, Mon 00:00 -> Sun 23:59
+                            # (Europe/Paris). Run the routine on Mondays.
+  lookback_hours: 26        # only used if weekly: false (daily mode)
+  monday_lookback_hours: 74 # only used if weekly: false (daily mode)
   first_run_lookback_days: 7
-  send_weekdays: [0, 1, 2, 3, 4]   # email Mon-Fri (0=Mon .. 6=Sun); skip Sat/Sun
+  send_weekdays: [0]        # email only on Mondays (0=Mon .. 6=Sun)

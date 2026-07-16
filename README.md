@@ -1,7 +1,7 @@
-# ⏩ Forward Pass — daily tabular-AI newsletter
+# ⏩ Forward Pass — weekly tabular-AI newsletter
 
-A daily digest of new papers relevant to tabular foundation models —
-delivered every weekday morning, zero servers to maintain.
+A weekly digest of the top papers on tabular foundation models —
+delivered every Monday morning, zero servers to maintain.
 
 ### 📬 [**Subscribe (web + RSS)**](https://gblayer.github.io/forward-pass-newsletter/) &nbsp;·&nbsp; [RSS feed](https://gblayer.github.io/forward-pass-newsletter/rss.xml) &nbsp;·&nbsp; [Read the archive](https://gblayer.github.io/forward-pass-newsletter/)
 

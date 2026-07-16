@@ -32,14 +32,16 @@ API credits. The scripts handle fetching, dedup, and email delivery.
 ## Routine prompt (paste as-is)
 
 ```
-You are producing my daily tabular-ML paper newsletter. Work autonomously,
+You are producing my WEEKLY tabular-ML paper newsletter (runs on Mondays).
+Work autonomously,
 no questions. Steps:
 
 1. Install deps and fetch candidates:
      pip install -r requirements.txt
      python -m newsletter.main --fetch-only
-   This writes candidates.json (papers from the last 24h, already deduped
-   against seen_papers.json).
+   This writes candidates.json (papers from the PREVIOUS FULL WEEK,
+   Monday 00:00 to Sunday 23:59 Europe/Paris, already deduped against
+   seen_papers.json).
 
 2. Read config.yaml and internalize the `topic_profile` — it defines what
    is relevant to my PhD. Then read candidates.json and score EVERY
@@ -70,18 +72,17 @@ no questions. Steps:
 
 4. INDUSTRY NEWS (config.yaml -> industry_watch). Web-search for news about
    the listed companies' tabular-FM work: model releases, papers, funding,
-   launches, benchmarks. Window: ONLY THE LAST 24 HOURS (lookback_days=1) —
-   EXCEPT on Mondays, cover the LAST ~72 HOURS / Friday-Sunday
-   (monday_lookback_days=3) to sweep the weekend. Include ONLY items
-   genuinely published in that window AND that materially concern tabular
-   FMs / tabular ML / relational FMs / neural processes. Verify each against
-   a real dated URL — do NOT pad with older items or "context". Else use [].
+   launches, benchmarks. Window: THE PREVIOUS WEEK (last 7 days,
+   lookback_days=7). Include ONLY items genuinely published in that window
+   AND that materially concern tabular FMs / tabular ML / relational FMs /
+   neural processes. Verify each against a real dated URL — do NOT pad with
+   older items or "context". If nothing qualifies, use [].
 
 5. IN BRIEF (config.yaml -> spotlight). A scannable top summary as bullets:
-   `academia` = 2-4 short one-line bullets on today's key papers/themes;
-   `industry` = 1-3 short one-line bullets on today's key news. Optionally a
+   `academia` = 2-4 short one-line bullets on the week's key papers/themes;
+   `industry` = 1-3 short one-line bullets on the week's key news. Optionally a
    short `theme` label. Concrete, no hype. Base it ONLY on this issue's
-   material (today's papers + today's industry). Omit a side that has
+   material (this week's papers + industry). Omit a side that has
    nothing; omit the whole block if there's nothing to say.
 
 6. Write digest.json in the repo root:
@@ -99,7 +100,7 @@ no questions. Steps:
    This emails the digest, updates seen_papers.json, AND (on a real send)
    writes the free web issue + RSS feed under docs/. NOTE: finalize only
    sends when there is content — if BOTH papers and industry are empty (a
-   fully quiet day) it deliberately sends NO email and publishes nothing.
+   fully quiet week) it deliberately sends NO email and publishes nothing.
    That is expected, not an error.
 
 8. Commit and push ALL changes to the default branch with message

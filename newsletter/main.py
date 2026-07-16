@@ -16,6 +16,7 @@ import re
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import yaml
 
@@ -89,19 +90,39 @@ def main() -> int:
     args = parser.parse_args()
 
     now = datetime.now(timezone.utc)
+    until = now  # exclusive upper bound on publication time
     if args.first_run:
         since = now - timedelta(days=CONFIG["run"]["first_run_lookback_days"])
         window_label = f"last {CONFIG['run']['first_run_lookback_days']} days"
-    elif now.weekday() == 0:  # Monday: reach back to Friday to cover the weekend
+    elif CONFIG["run"].get("weekly", False):
+        # Weekly cadence: the previous FULL calendar week, Monday 00:00 to
+        # Sunday 23:59 (Europe/Paris). Anything announced after the week
+        # ended is excluded here AND left unseen, so it rolls into next week.
+        paris = ZoneInfo("Europe/Paris")
+        now_paris = now.astimezone(paris)
+        week_end_paris = (now_paris - timedelta(days=now_paris.weekday())).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        week_start_paris = week_end_paris - timedelta(days=7)
+        since = week_start_paris.astimezone(timezone.utc)
+        until = week_end_paris.astimezone(timezone.utc)
+        window_label = (
+            f"week of {week_start_paris:%b %d} – "
+            f"{(week_end_paris - timedelta(days=1)):%b %d}"
+        )
+    elif now.weekday() == 0:  # daily-mode Monday: reach back to Friday
         since = now - timedelta(hours=CONFIG["run"].get("monday_lookback_hours", 74))
         window_label = "since Friday"
     else:
         since = now - timedelta(hours=CONFIG["run"]["lookback_hours"])
         window_label = "last 24 hours"
-    log.info("Window: since %s", since.isoformat())
+    log.info("Window: %s -> %s", since.isoformat(), until.isoformat())
 
     seen = state.load_seen()
-    candidates = [p for p in gather_candidates(since) if p.id not in seen]
+    candidates = [
+        p for p in gather_candidates(since)
+        if p.id not in seen and p.published < until
+    ]
     log.info("Candidates after dedup: %d", len(candidates))
 
     if args.fetch_only:
