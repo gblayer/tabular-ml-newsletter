@@ -1,5 +1,13 @@
 [
  {
+  "number": 8,
+  "date": "2026-07-20",
+  "iso": "2026-07-20T07:49:36.013463+00:00",
+  "title": "Forward Pass \u2014 Issue 8 (Jul 20, 2026)",
+  "path": "issues/issue-8.html",
+  "summary": "8 papers, 1 industry update \u2014 Two papers push TabPFN into new territory: as an in-context head for discrete-choice/marketing panels (2607.13314) and as a calibration-boosting classifier head on frozen multimodal embeddings (2607.11007)."
+ },
+ {
   "number": 7,
   "date": "2026-07-16",
   "iso": "2026-07-16T07:43:14.956579+00:00",
